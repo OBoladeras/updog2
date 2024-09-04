@@ -3,7 +3,7 @@
 [![MIT License](http://img.shields.io/badge/license-MIT%20License-blue.svg)](https://github.com/OBoladeras/updog/blob/master/LICENSE)
 
 <p>
-  <img src="https://github.com/OBoladeras/updog/blob/master/updog/static/images/updog.png" width=85px alt="updog"/>
+  <img src="https://raw.githubusercontent.com/OBoladeras/updog2/main/updog2/static/images/updog.png" width=85px alt="updog"/>
 </p>
 
 Updog is a replacement for Python's `SimpleHTTPServer`. 
@@ -11,18 +11,18 @@ It allows uploading and downloading via HTTP/S,
 can set ad hoc SSL certificates and use HTTP basic auth.
 
 <p align="center">
-  <img src="https://github.com/OBoladeras/updog/blob/master/updog/static/images/example.png" alt="Updog screenshot"/>
+  <img src="https://raw.githubusercontent.com/OBoladeras/updog2/main/updog2/static/images/example.png" alt="Updog screenshot"/>
 </p>
 
 ## Installation
 
 Install using pip:
 
-`pip3 install updog`
+`pip3 install updog2`
 
 ## Usage
 
-`updog [-d DIRECTORY] [-p PORT] [--password PASSWORD] [--ssl]`
+`updog2 [-d DIRECTORY] [-p PORT] [--password PASSWORD] [--ssl]`
 
 | Argument                            | Description                                      |
 |-------------------------------------|--------------------------------------------------| 
@@ -38,19 +38,19 @@ Install using pip:
 
 **Serve from your current directory:**
 
-`updog`
+`updog2`
 
 **Serve from another directory:**
 
-`updog -d /another/directory`
+`updog2 -d /another/directory`
 
 **Serve from port 1234:**
 
-`updog -p 1234`
+`updog2 -p 1234`
 
 **Password protect the page:**
 
-`updog --password examplePassword123!`
+`updog2 --password examplePassword123!`
 
 *Please note*: updog uses HTTP basic authentication.
 To login, you should leave the username blank and just
@@ -58,11 +58,11 @@ enter the password in the password field.
 
 **Use an SSL connection:**
 
-`updog --ssl`
+`updog2 --ssl`
 
 **Show a QR code to access the page:**
 
-`updog -qr`
+`updog2 -qr`
 
 
 ## Notes
