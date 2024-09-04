@@ -1,6 +1,9 @@
+import io
 import os
 import signal
 import argparse
+from PIL import Image
+from zipfile import ZipFile
 
 from flask import Flask, render_template, send_file, redirect, request, send_from_directory, url_for, abort
 from flask_httpauth import HTTPBasicAuth
@@ -47,6 +50,16 @@ def parse_arguments():
         args.directory = os.path.abspath(args.directory)
 
     return args
+
+
+def get_imagesss(dir):
+    for file in os.listdir(dir):
+        extension = os.path.splitext(file)[1]
+        if extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg']:
+            tmp = {}
+            tmp["filename"] = file
+            tmp["size"] = round(os.path.getsize(os.path.join(dir, file)) / 1024 / 1024, 2)
+            yield tmp
 
 
 def main():
@@ -110,6 +123,11 @@ def main():
             back = ''
 
         if os.path.exists(requested_path):
+            if args.images:
+                images = get_imagesss(requested_path)
+                images_names = [img['filename'] for img in get_imagesss(requested_path)]
+                return render_template('images.html', directory=requested_path, images=images, images_names=images_names, version=VERSION)
+
             # Read the files
             try:
                 directory_files = process_files(os.scandir(requested_path), base_directory)
@@ -156,6 +174,54 @@ def main():
                         abort(403, 'Write Permission Denied: ' + full_path)
 
             return redirect(request.referrer)
+
+    #############################
+    # Image Serve Functionality #
+    #############################
+    if args.images:
+        @app.route('/images/<filename>')
+        def serve_image(filename):
+            image_path = os.path.join(args.directory, filename)
+
+            if not os.path.exists(image_path):
+                abort(404)
+
+            # Reduce image size if it is too large
+            if filename.endswith(".png") or filename.endswith(".jpg"):
+                with Image.open(image_path) as img:
+                    aspect_ratio = img.height / img.width
+
+                    if img.width > 750:
+                        new_height = int(750 * aspect_ratio)
+
+                        img = img.resize((750, new_height))
+
+                    img_format = img.format if img.format else "JPEG"
+                    img_byte_arr = io.BytesIO()
+                    img.save(img_byte_arr, format=img_format)
+                    img_byte_arr.seek(0)
+
+                return send_file(img_byte_arr, mimetype=f'image/{img_format.lower()}')
+            else:
+                return send_file(image_path)
+
+        # Download image urls
+        @app.route('/images/download/<filename>')
+        def download_image(filename):
+            return send_from_directory(args.directory, filename, as_attachment=True)
+
+        # Download all images in a zip file
+        @app.route('/images/download/all')
+        def download_all_images():
+            zipfile_name = os.path.join(args.directory, "all_images.zip")
+
+            # Create a zip file with all images
+            with ZipFile(zipfile_name, 'w') as zipf:
+                for file in os.listdir(args.directory):
+                    if file.endswith(".png") or file.endswith(".jpg"):
+                        zipf.write(os.path.join(args.directory, file), file)
+
+            return send_from_directory(args.directory, "all_images.zip", as_attachment=True)
 
     # Password functionality is without username
     users = {

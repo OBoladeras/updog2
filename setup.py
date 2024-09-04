@@ -60,6 +60,7 @@ setup(
         'flask_httpauth',
         'werkzeug',
         'pyopenssl',
-        'qrcode'
+        'qrcode',
+        'pillow'
     ],
 )

@@ -13,6 +13,11 @@ can set ad hoc SSL certificates and use HTTP basic auth.
 <p align="center">
   <img src="https://raw.githubusercontent.com/OBoladeras/updog2/main/updog2/static/images/example.png" alt="Updog screenshot"/>
 </p>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/OBoladeras/updog2/main/updog2/static/images/example2.png" alt="Updog screenshot 2"/>
+</p>
+
+
 
 ## Installation
 
@@ -29,6 +34,7 @@ Install using pip:
 | -d DIRECTORY, --directory DIRECTORY | Root directory [Default=.]                       | 
 | -p PORT, --port PORT                | Port to serve [Default=9090]                     |
 | -qr, --qr                           | Show QR code to access the page                  |
+| -i, --images                        | Show the images in the directory                 |
 | --password PASSWORD                 | Use a password to access the page. (No username) |
 | --ssl                               | Enable transport encryption via SSL              |
 | --version                           | Show version                                     |
@@ -63,6 +69,14 @@ enter the password in the password field.
 **Show a QR code to access the page:**
 
 `updog2 -qr`
+
+**Show the images in the directory:**
+
+`updog2 -i`
+
+**More examples:**
+
+`updog2 /tmp/mydog -p 1234 --password examplePassword123! --ssl -qr -i`
 
 
 ## Notes

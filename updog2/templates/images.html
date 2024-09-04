@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Title -->
+    <title>updog - images - {{ directory }}</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome-5.1/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/datatable/datatables.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/images.css') }}">
+    <script>fileNames = [];</script>
+</head>
+
+<body>
+    <div class="conn">
+
+        <!-- Header -->
+        <header id="header" class="d-flex align_item_center">
+            <div onclick="document.location='/'" class="logo_p">
+                <img src="{{ url_for('static', filename='images/updog.png') }}" alt="updog">
+            </div>
+
+            <div class="heading_title_p">
+                <h2>Directory: {{ directory }}</h2>
+            </div>
+        </header>
+
+
+        <div class="buttons_searchers">
+            <!-- ----- Upload Form ----- -->
+            <div class="inputUploadP">
+                <form method="post" action="/upload" enctype="multipart/form-data" class="uploadForm">
+                    <!-- -- Upload File -- -->
+                    <div class="uploadFile_P">
+                        <input type="file" name="file" id="file" class="uploadFile"
+                            data-multiple-caption="{count} files selected" multiple />
+                        <label for="file">
+                            <i class="fa fa-upload"></i>
+                            <span>Choose a file…</span>
+                        </label>
+                        <input type="hidden" name="path" value="{{ directory }}">
+                    </div>
+                    <!-- -- Upload Btn -- -->
+                    <p class="uploadBtn_P">
+                        <button type="submit" class="uploadBtn btn btn-primary">
+                            Upload
+                        </button>
+                    </p>
+                </form>
+            </div>
+            <div>
+                <div class="downloadButtons">
+                    <br>
+                    <div>
+                        <button onclick="downloadAll()" class="btn btn-primary">Download all</button>
+                        <a href="images/download/all"><button class="btn btn-primary">Download zip</button></a>
+                    </div>
+                    <br>
+                    <div id="tableData_filter" class="dataTables_filter">
+                        <label>
+                            Search:
+                            <input type="search" class="" placeholder="" aria-controls="tableData"
+                                onkeyup="searcherfunc()">
+                        </label>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+
+        <div class="photoContainer">
+            {% for image in images %}
+            <script id="delete">
+                fileNames.push("{{ image.filename }}");
+                document.getElementById('delete').remove();
+            </script>
+            <div class="image">
+                <a href="{{ url_for('serve_image', filename=image.filename) }}" target="_blank">
+                    <img data-src="{{ url_for('serve_image', filename=image.filename) }}" alt="{{ image }}"
+                        class="lazyload">
+                </a>
+                <div class="info">
+                    <div>
+                        <p>{{ image.filename }}</p>
+                        <p>{{ image.size }} Mb</p>
+                    </div>
+                    <br><br>
+                    <a href="images/download/{{image.filename}}"><button
+                            class="btn btn-primary downloadImage">Download</button></a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <footer>
+            <p>
+                updog v{{ version }}
+            </p>
+        </footer>
+
+    </div> <!-- end class conn -->
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/datatable/datatables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/lazysizes.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/images.js')}}"></script>
+</body>
+
+</html>

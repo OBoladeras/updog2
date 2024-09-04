@@ -4,3 +4,4 @@ flask_httpauth
 werkzeug
 pyopenssl
 qrcode
+pillow
