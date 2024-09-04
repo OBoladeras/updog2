@@ -1,4 +1,4 @@
-![Version 2.0](http://img.shields.io/badge/version-v2.0-green.svg)
+![Version 2.1.0](http://img.shields.io/badge/version-v2.1.0-green.svg)
 ![Python 3.8](http://img.shields.io/badge/python-3.10-blue.svg)
 [![MIT License](http://img.shields.io/badge/license-MIT%20License-blue.svg)](https://github.com/OBoladeras/updog/blob/master/LICENSE)
 
