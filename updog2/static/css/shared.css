@@ -1,0 +1,74 @@
+.qr {
+    margin-left: auto;
+    margin-right: 20px;
+
+    width: 100px;
+}
+
+@media screen and (max-width: 768px) {
+    .qr {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+}
+
+.toggleHolder {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+
+    gap: 0.6rem;
+}
+
+.toggleHolder label {
+    margin: 0;
+}
+
+#toggle {
+    display: none;
+}
+
+.toggleHolder .buttonLabel {
+    width: 3.5rem;
+    height: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 0.3rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    color: white;
+    background-color: var(--blue);
+}
+
+
+@keyframes rotateButton {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    20% {
+        transform: rotate(45deg);
+    }
+
+    40% {
+        transform: rotate(0deg);
+    }
+
+    60% {
+        transform: rotate(-45deg);
+    }
+
+    80% {
+        transform: rotate(0deg);
+    }
+}
+
+.buttonLabel:hover {
+    animation: rotateButton 1s forwards infinite linear;
+    animation-delay: 1s;
+}

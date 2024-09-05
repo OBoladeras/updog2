@@ -46,7 +46,7 @@ img {
     padding-right: 2rem;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 768px) {
 
     .photoContainer>* {
         flex: 1 1 20%;

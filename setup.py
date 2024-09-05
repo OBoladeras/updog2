@@ -11,7 +11,6 @@ setup(
     name='updog2',
     version=updog2.version,
     url='https://github.com/OBoladeras/updog2',
-    # GitHub releases in format "updog-X.Y"
     download_url='https://github.com/OBoladeras/updog2/archive/updog-' + updog2.version + '.tar.gz',
     license='MIT',
     author='OBoladeras',

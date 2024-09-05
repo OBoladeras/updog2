@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/datatable/datatables.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/images.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shared.css') }}">
     <script>fileNames = [];</script>
 </head>
 
@@ -28,6 +29,17 @@
 
             <div class="heading_title_p">
                 <h2>Directory: {{ directory }}</h2>
+
+                <div class="toggleHolder">
+                    <p onclick="switchMode('files')">Files</p>
+                    <input type="checkbox" id="toggle" />
+                    <label for="toggle" class="buttonLabel" onclick="switchMode('files')"><span>-></span></label>
+                    <p>Images</p>
+                </div>
+            </div>
+
+            <div class="qr">
+                <img src="{{ qrImage }}" alt="">
             </div>
         </header>
 

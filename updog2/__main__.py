@@ -38,11 +38,18 @@ def parse_arguments():
                         help='Root directory (optional, overrides positional argument)')
     parser.add_argument('-p', '--port', type=int, default=9090,
                         help='Port to serve [Default=9090]')
-    parser.add_argument('-qr', '--qr', action='store_true', help='Generate QR code for the server URL')
-    parser.add_argument('-i', '--images', action='store_true',help='Display just image files')
-    parser.add_argument('--password', type=str, default='', help='Use a password to access the page. (No username)')
-    parser.add_argument('--ssl', action='store_true', help='Use an encrypted connection')
-    parser.add_argument('--version', action='version', version='%(prog)s v'+VERSION)
+    parser.add_argument('-qr', '--qr', action='store_true',
+                        help='Generate QR code for the server URL')
+    parser.add_argument('-q', '--quiet', action='store_true',
+                        help='Do not display the QR code')
+    parser.add_argument('-i', '--images', action='store_true',
+                        help='Display just image files')
+    parser.add_argument('--password', type=str, default='',
+                        help='Use a password to access the page. (No username)')
+    parser.add_argument('--ssl', action='store_true',
+                        help='Use an encrypted connection')
+    parser.add_argument('--version', action='version',
+                        version='%(prog)s v'+VERSION)
 
     args = parser.parse_args()
 
@@ -58,7 +65,8 @@ def get_imagesss(dir):
         if extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg']:
             tmp = {}
             tmp["filename"] = file
-            tmp["size"] = round(os.path.getsize(os.path.join(dir, file)) / 1024 / 1024, 2)
+            tmp["size"] = round(os.path.getsize(
+                os.path.join(dir, file)) / 1024 / 1024, 2)
             yield tmp
 
 
@@ -123,19 +131,24 @@ def main():
             back = ''
 
         if os.path.exists(requested_path):
+            qrImage = qr.generate(
+                args.port, args.ssl) if not args.quiet else None
+
             if args.images:
                 images = get_imagesss(requested_path)
-                images_names = [img['filename'] for img in get_imagesss(requested_path)]
-                return render_template('images.html', directory=requested_path, images=images, images_names=images_names, version=VERSION)
+                images_names = [img['filename']
+                                for img in get_imagesss(requested_path)]
+                return render_template('images.html', directory=requested_path, images=images, images_names=images_names, qrImage=qrImage, version=VERSION)
 
             # Read the files
             try:
-                directory_files = process_files(os.scandir(requested_path), base_directory)
+                directory_files = process_files(
+                    os.scandir(requested_path), base_directory)
             except PermissionError:
                 abort(403, 'Read Permission Denied: ' + requested_path)
 
             return render_template('home.html', files=directory_files, back=back,
-                                   directory=requested_path, is_subdirectory=is_subdirectory, version=VERSION)
+                                   directory=requested_path, is_subdirectory=is_subdirectory, qrImage=qrImage, version=VERSION)
         else:
             return redirect('/')
 
@@ -223,6 +236,14 @@ def main():
 
             return send_from_directory(args.directory, "all_images.zip", as_attachment=True)
 
+    #############################
+    # Switch mode functionality #
+    #############################
+    @app.route('/mode/<mode>')
+    def switch_mode(mode):
+        args.images = True if mode == 'images' else False
+        return redirect('/')
+
     # Password functionality is without username
     users = {
         '': generate_password_hash(args.password)
@@ -248,7 +269,7 @@ def main():
     ssl_context = None
     if args.ssl:
         ssl_context = 'adhoc'
-    
+
     if args.qr:
         qr.show(args.port, args.ssl)
 

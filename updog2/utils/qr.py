@@ -5,7 +5,7 @@ import base64
 import webbrowser
 
 
-def show(port: int, ssl: bool) -> None:
+def generate(port: int, ssl: bool) -> str:
     def get_ip_address() -> str:
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
@@ -26,4 +26,8 @@ def show(port: int, ssl: bool) -> None:
     bitMap.seek(0)
     base64_image = base64.b64encode(bitMap.getvalue()).decode('utf-8')
 
-    webbrowser.open(f"data:image/png;base64,{base64_image}")
+    return f"data:image/png;base64,{base64_image}"
+
+
+def show(port: int, ssl: bool) -> None:
+    webbrowser.open(generate(port, ssl))
