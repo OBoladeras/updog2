@@ -1,16 +1,12 @@
+b {
+    font-weight: 600;
+}
+
 .qr {
     margin-left: auto;
     margin-right: 20px;
 
     width: 100px;
-}
-
-@media screen and (max-width: 768px) {
-    .qr {
-        margin-left: auto;
-        margin-right: auto;
-    }
-
 }
 
 .toggleHolder {
@@ -45,6 +41,10 @@
     background-color: var(--blue);
 }
 
+.buttonLabel:hover {
+    animation: rotateButton 1s forwards infinite linear;
+    animation-delay: 1s;
+}
 
 @keyframes rotateButton {
     0% {
@@ -68,7 +68,21 @@
     }
 }
 
-.buttonLabel:hover {
-    animation: rotateButton 1s forwards infinite linear;
-    animation-delay: 1s;
+@media screen and (max-width: 768px) {
+    .qr {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .toggleHolder {
+        justify-content: center;
+    }
+
+    .toggleHolder p {
+        width: 60px;
+    }
+
+    .toggleHolder .files {
+        text-align: end;
+    }
 }

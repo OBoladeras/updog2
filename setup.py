@@ -17,8 +17,8 @@ setup(
     author_email='oriolboladeras@gmail.com',
     description='Updog is a replacement for Python\'s SimpleHTTPServer. '
                 'It allows uploading and downloading via HTTP/S, can set '
-                'ad hoc SSL certificates and use http basic auth.'
-                'The last version allows to generate a QR code to share the link.'
+                'ad hoc SSL certificates and use http basic auth. '
+                'The last version allows to generate a QR code to share the link '
                 'and also allows to display just image files in a more friendly way.',
     long_description=long_description,
     long_description_content_type='text/markdown',

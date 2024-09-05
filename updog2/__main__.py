@@ -41,7 +41,7 @@ def parse_arguments():
     parser.add_argument('-qr', '--qr', action='store_true',
                         help='Generate QR code for the server URL')
     parser.add_argument('-q', '--quiet', action='store_true',
-                        help='Do not display the QR code')
+                        help='Do not display the QR code in the webpage')
     parser.add_argument('-i', '--images', action='store_true',
                         help='Display just image files')
     parser.add_argument('--password', type=str, default='',
@@ -191,50 +191,56 @@ def main():
     #############################
     # Image Serve Functionality #
     #############################
-    if args.images:
-        @app.route('/images/<filename>')
-        def serve_image(filename):
-            image_path = os.path.join(args.directory, filename)
+    @app.route('/images/<filename>')
+    def serve_image(filename):
+        if not args.images:
+            return redirect('/')
 
-            if not os.path.exists(image_path):
-                abort(404)
+        image_path = os.path.join(args.directory, filename)
 
-            # Reduce image size if it is too large
-            if filename.endswith(".png") or filename.endswith(".jpg"):
-                with Image.open(image_path) as img:
-                    aspect_ratio = img.height / img.width
+        if not os.path.exists(image_path):
+            abort(404)
 
-                    if img.width > 750:
-                        new_height = int(750 * aspect_ratio)
+        # Reduce image size if it is too large
+        if filename.endswith(".png") or filename.endswith(".jpg"):
+            with Image.open(image_path) as img:
+                aspect_ratio = img.height / img.width
 
-                        img = img.resize((750, new_height))
+                if img.width > 750:
+                    new_height = int(750 * aspect_ratio)
 
-                    img_format = img.format if img.format else "JPEG"
-                    img_byte_arr = io.BytesIO()
-                    img.save(img_byte_arr, format=img_format)
-                    img_byte_arr.seek(0)
+                    img = img.resize((750, new_height))
 
-                return send_file(img_byte_arr, mimetype=f'image/{img_format.lower()}')
-            else:
-                return send_file(image_path)
+                img_format = img.format if img.format else "JPEG"
+                img_byte_arr = io.BytesIO()
+                img.save(img_byte_arr, format=img_format)
+                img_byte_arr.seek(0)
 
-        # Download image urls
-        @app.route('/images/download/<filename>')
-        def download_image(filename):
-            return send_from_directory(args.directory, filename, as_attachment=True)
+            return send_file(img_byte_arr, mimetype=f'image/{img_format.lower()}')
+        else:
+            return send_file(image_path)
 
-        # Download all images in a zip file
-        @app.route('/images/download/all')
-        def download_all_images():
-            zipfile_name = os.path.join(args.directory, "all_images.zip")
+    # Download image urls
+    @app.route('/images/download/<filename>')
+    def download_image(filename):
+        if not args.images:
+            return redirect('/')
+        return send_from_directory(args.directory, filename, as_attachment=True)
 
-            # Create a zip file with all images
-            with ZipFile(zipfile_name, 'w') as zipf:
-                for file in os.listdir(args.directory):
-                    if file.endswith(".png") or file.endswith(".jpg"):
-                        zipf.write(os.path.join(args.directory, file), file)
+    # Download all images in a zip file
+    @app.route('/images/download/all')
+    def download_all_images():
+        if not args.images:
+            return redirect('/')
+        zipfile_name = os.path.join(args.directory, "all_images.zip")
 
-            return send_from_directory(args.directory, "all_images.zip", as_attachment=True)
+        # Create a zip file with all images
+        with ZipFile(zipfile_name, 'w') as zipf:
+            for file in os.listdir(args.directory):
+                if file.endswith(".png") or file.endswith(".jpg"):
+                    zipf.write(os.path.join(args.directory, file), file)
+
+        return send_from_directory(args.directory, "all_images.zip", as_attachment=True)
 
     #############################
     # Switch mode functionality #
