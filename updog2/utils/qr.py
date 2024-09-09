@@ -6,6 +6,16 @@ import webbrowser
 
 
 def generate(port: int, ssl: bool) -> str:
+    r"""
+    Generate a QR code image with the link to the server.  
+    :param port: The port the server is running on.  
+    :param ssl: Whether the server is running with SSL.  
+    :return: A base64 encoded image
+
+    Example:
+    >>> generate(8080, False)
+    """
+
     def get_ip_address() -> str:
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
@@ -30,4 +40,6 @@ def generate(port: int, ssl: bool) -> str:
 
 
 def show(port: int, ssl: bool) -> None:
+    r"Open the default web browser with the QR code image."
+
     webbrowser.open(generate(port, ssl))

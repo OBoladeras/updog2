@@ -14,6 +14,7 @@ from werkzeug.serving import run_simple
 from updog2.utils.path import is_valid_subpath, is_valid_upload_path, get_parent_directory, process_files
 from updog2.utils.output import error, info, warn, success
 import updog2.utils.qr as qr
+from updog2.utils.images import Images
 from updog2 import version as VERSION
 
 
@@ -59,22 +60,12 @@ def parse_arguments():
     return args
 
 
-def get_imagesss(dir):
-    for file in os.listdir(dir):
-        extension = os.path.splitext(file)[1]
-        if extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg']:
-            tmp = {}
-            tmp["filename"] = file
-            tmp["size"] = round(os.path.getsize(
-                os.path.join(dir, file)) / 1024 / 1024, 2)
-            yield tmp
-
-
 def main():
     args = parse_arguments()
 
     app = Flask(__name__)
     auth = HTTPBasicAuth()
+    images_back = Images(args.directory)
 
     global base_directory
     base_directory = args.directory
@@ -135,9 +126,8 @@ def main():
                 args.port, args.ssl) if not args.quiet else None
 
             if args.images:
-                images = get_imagesss(requested_path)
-                images_names = [img['filename']
-                                for img in get_imagesss(requested_path)]
+                images = images_back.get_imagesss(requested_path)
+                images_names = [img['filename'] for img in images]
                 return render_template('images.html', directory=requested_path, images=images, images_names=images_names, qrImage=qrImage, version=VERSION)
 
             # Read the files
@@ -191,41 +181,28 @@ def main():
     #############################
     # Image Serve Functionality #
     #############################
-    @app.route('/images/<filename>')
-    def serve_image(filename):
-        if not args.images:
+    @app.route('/images/<path:path>')
+    def serve_image(path):
+        image_path = path
+        if not args.images or not is_valid_subpath(image_path, base_directory):
             return redirect('/')
 
-        image_path = os.path.join(args.directory, filename)
-
+        filename = image_path.split('/')[-1]
         if not os.path.exists(image_path):
             abort(404)
+        
 
-        # Reduce image size if it is too large
-        if filename.endswith(".png") or filename.endswith(".jpg"):
-            with Image.open(image_path) as img:
-                aspect_ratio = img.height / img.width
-
-                if img.width > 750:
-                    new_height = int(750 * aspect_ratio)
-
-                    img = img.resize((750, new_height))
-
-                img_format = img.format if img.format else "JPEG"
-                img_byte_arr = io.BytesIO()
-                img.save(img_byte_arr, format=img_format)
-                img_byte_arr.seek(0)
-
-            return send_file(img_byte_arr, mimetype=f'image/{img_format.lower()}')
-        else:
-            return send_file(image_path)
+        reducedImage = images_back.reduce_image(image_path)
+        return send_file(reducedImage, mimetype='image/jpeg')
 
     # Download image urls
-    @app.route('/images/download/<filename>')
-    def download_image(filename):
-        if not args.images:
+    @app.route('/images/download', defaults={'path': ''})
+    @app.route('/images/download/<path:path>')
+    def download_image(path):
+        if not args.images and not is_valid_subpath(path, base_directory):
             return redirect('/')
-        return send_from_directory(args.directory, filename, as_attachment=True)
+
+        return send_from_directory(args.directory, path, as_attachment=True)
 
     # Download all images in a zip file
     @app.route('/images/download/all')
@@ -245,10 +222,12 @@ def main():
     #############################
     # Switch mode functionality #
     #############################
-    @app.route('/mode/<mode>')
-    def switch_mode(mode):
+    @app.route('/mode/<mode>', defaults={'path': ''})
+    @app.route('/mode/<mode>/<path:path>')
+    def switch_mode(mode, path):
         args.images = True if mode == 'images' else False
-        return redirect('/')
+
+        return redirect('/' + path)
 
     # Password functionality is without username
     users = {

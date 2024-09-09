@@ -71,7 +71,7 @@
                     <br>
                     <div>
                         <button onclick="downloadAll()" class="btn btn-primary">Download all</button>
-                        <a href="images/download/all"><button class="btn btn-primary">Download zip</button></a>
+                        <a href="/images/download/all"><button class="btn btn-primary">Download zip</button></a>
                     </div>
                     <br>
                     <div id="tableData_filter" class="dataTables_filter">
@@ -95,8 +95,8 @@
                 document.getElementById('delete').remove();
             </script>
             <div class="image">
-                <a href="{{ url_for('serve_image', filename=image.filename) }}" target="_blank">
-                    <img data-src="{{ url_for('serve_image', filename=image.filename) }}" alt="{{ image }}"
+                <a href="{{ url_for('serve_image', path=image.path) }}" target="_blank">
+                    <img data-src="{{ url_for('serve_image', path=image.path) }}" alt="{{ image }}"
                         class="lazyload">
                 </a>
                 <div class="info">
@@ -105,7 +105,7 @@
                         <p>{{ image.size }} Mb</p>
                     </div>
                     <br><br>
-                    <a href="images/download/{{image.filename}}"><button
+                    <a href="/images/download/{{image.path}}"><button
                             class="btn btn-primary downloadImage">Download</button></a>
                 </div>
             </div>

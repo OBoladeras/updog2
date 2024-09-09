@@ -5,10 +5,16 @@
 ### Added
 - More info on images with image mode.
 - Show download progress when downloading all images.
+- Add description of the functions to help read the code.
 
 ### Changed
 - Consistent colors with hover effects.
 - Better support for image formats.
+
+- Diferent processes for image backend.
+
+### Fixed
+- Download all images now works correctly.
 
 
 ## [2.1.3] - 2024-09-05
