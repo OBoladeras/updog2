@@ -2,7 +2,7 @@ import io
 import socket
 import qrcode
 import base64
-import webbrowser
+from PIL import Image
 
 
 def generate(port: int, ssl: bool) -> str:
@@ -40,6 +40,7 @@ def generate(port: int, ssl: bool) -> str:
 
 
 def show(port: int, ssl: bool) -> None:
-    r"Open the default web browser with the QR code image."
+    r"""Show the QR code image with the link to the server."""
 
-    webbrowser.open(generate(port, ssl))
+    Image.open(io.BytesIO(base64.b64decode(
+        generate(port, ssl).split(",")[1]))).show()
