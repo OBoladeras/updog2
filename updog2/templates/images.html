@@ -71,7 +71,10 @@
                     <br>
                     <div>
                         <button onclick="downloadAll()" class="btn btn-primary">Download all</button>
-                        <a href="/images/download/all"><button class="btn btn-primary">Download zip</button></a>
+                        <form method="post" action="/images/download/all">
+                            <input type="hidden" name="path" id="path_input_download">
+                            <button type="submit" class="btn btn-primary">Download zip</button>
+                        </form>
                     </div>
                     <br>
                     <div id="tableData_filter" class="dataTables_filter">
@@ -96,8 +99,7 @@
             </script>
             <div class="image">
                 <a href="{{ url_for('serve_image', path=image.path) }}" target="_blank">
-                    <img data-src="{{ url_for('serve_image', path=image.path) }}" alt="{{ image }}"
-                        class="lazyload">
+                    <img data-src="{{ url_for('serve_image', path=image.path) }}" alt="{{ image.filename }}" class="lazyload">
                 </a>
                 <div class="info">
                     <div>

@@ -13,8 +13,8 @@ from werkzeug.serving import run_simple
 
 from updog2.utils.path import is_valid_subpath, is_valid_upload_path, get_parent_directory, process_files
 from updog2.utils.output import error, info, warn, success
+from updog2.utils.images import get_images, reduce_image, generate_zip
 import updog2.utils.qr as qr
-from updog2.utils.images import Images
 from updog2 import version as VERSION
 
 
@@ -65,7 +65,6 @@ def main():
 
     app = Flask(__name__)
     auth = HTTPBasicAuth()
-    images_back = Images(args.directory)
 
     global base_directory
     base_directory = args.directory
@@ -126,7 +125,7 @@ def main():
                 args.port, args.ssl) if not args.quiet else None
 
             if args.images:
-                images = images_back.get_imagesss(requested_path)
+                images = get_images(args.directory, requested_path)
                 images_names = [img['filename'] for img in images]
                 return render_template('images.html', directory=requested_path, images=images, images_names=images_names, qrImage=qrImage, version=VERSION)
 
@@ -183,16 +182,13 @@ def main():
     #############################
     @app.route('/images/<path:path>')
     def serve_image(path):
-        image_path = path
-        if not args.images or not is_valid_subpath(image_path, base_directory):
+        if not args.images or not is_valid_subpath(path, base_directory):
             return redirect('/')
 
-        filename = image_path.split('/')[-1]
-        if not os.path.exists(image_path):
+        if not os.path.exists(path):
             abort(404)
-        
 
-        reducedImage = images_back.reduce_image(image_path)
+        reducedImage = reduce_image(path)
         return send_file(reducedImage, mimetype='image/jpeg')
 
     # Download image urls
@@ -205,17 +201,16 @@ def main():
         return send_from_directory(args.directory, path, as_attachment=True)
 
     # Download all images in a zip file
-    @app.route('/images/download/all')
+    @app.route('/images/download/all', methods=['POST'])
     def download_all_images():
-        if not args.images:
+        if not args.images and request.method != 'POST':
             return redirect('/')
-        zipfile_name = os.path.join(args.directory, "all_images.zip")
 
-        # Create a zip file with all images
-        with ZipFile(zipfile_name, 'w') as zipf:
-            for file in os.listdir(args.directory):
-                if file.endswith(".png") or file.endswith(".jpg"):
-                    zipf.write(os.path.join(args.directory, file), file)
+        path = request.form['path'] if len(request.form['path']) > 0 else '.'
+        if not is_valid_subpath(path, base_directory):
+            return redirect('/')
+
+        generate_zip(args.directory, path)
 
         return send_from_directory(args.directory, "all_images.zip", as_attachment=True)
 
