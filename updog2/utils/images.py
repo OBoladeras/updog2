@@ -23,6 +23,7 @@ def get_images(base_directory: str, dir: str = '') -> list[dict]:
                 os.path.join(dir, file), base_directory)
             tmp["size"] = round(os.path.getsize(
                 os.path.join(dir, file)) / 1024 / 1024, 2)
+            tmp["date"] = os.path.getmtime(os.path.join(dir, file))
             images.append(tmp)
 
     return images

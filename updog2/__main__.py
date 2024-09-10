@@ -185,10 +185,11 @@ def main():
         if not args.images or not is_valid_subpath(path, base_directory):
             return redirect('/')
 
-        if not os.path.exists(path):
+        requested_path = os.path.join(base_directory, path)
+        if not os.path.exists(requested_path):
             abort(404)
 
-        reducedImage = reduce_image(path)
+        reducedImage = reduce_image(requested_path)
         return send_file(reducedImage, mimetype='image/jpeg')
 
     # Download image urls
@@ -210,7 +211,8 @@ def main():
         if not is_valid_subpath(path, base_directory):
             return redirect('/')
 
-        generate_zip(args.directory, path)
+        requested_path = os.path.join(base_directory, path)
+        generate_zip(args.directory, requested_path)
 
         return send_from_directory(args.directory, "all_images.zip", as_attachment=True)
 
