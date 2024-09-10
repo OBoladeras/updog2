@@ -99,13 +99,13 @@
             </script>
             <div class="image">
                 <a href="{{ url_for('serve_image', path=image.path) }}" target="_blank">
-                    <img data-src="{{ url_for('serve_image', path=image.path) }}" alt="{{ image.filename }}" class="lazyload">
+                    <img data-src="{{ url_for('serve_image', path=image.path) }}" alt="{{ image.filename }}"
+                        class="lazyload">
                 </a>
                 <div class="info">
                     <div>
-                        <p>{{ image.filename }}</p>
+                        <p><b>{{ image.filename }}</b> - {{ image.size }}</p>
                         <p>{{ image.date }}</p>
-                        <p>{{ image.size }} Mb</p>
                     </div>
                     <br><br>
                     <a href="/images/download/{{image.path}}"><button

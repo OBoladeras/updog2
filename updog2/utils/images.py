@@ -2,6 +2,7 @@ import io
 import os
 from PIL import Image
 from zipfile import ZipFile
+from datetime import datetime
 
 ZIP_NAME = 'images.zip'
 
@@ -23,9 +24,19 @@ def get_images(base_directory: str, dir: str = '') -> list[dict]:
             tmp["filename"] = file
             tmp["path"] = os.path.relpath(
                 os.path.join(dir, file), base_directory)
-            tmp["size"] = round(os.path.getsize(
-                os.path.join(dir, file)) / 1024 / 1024, 2)
-            tmp["date"] = os.path.getmtime(os.path.join(dir, file))
+            tmp["date"] = datetime.fromtimestamp(
+                os.path.getmtime(os.path.join(dir, file))).date()
+
+            size = os.path.getsize(os.path.join(dir, file))
+            if size < 1024:
+                tmp["size"] = f"{size} B"
+            elif size < 1024**2:
+                tmp["size"] = f"{size / 1024:.2f} KB"
+            elif size < 1024**3:
+                tmp["size"] = f"{size / 1024**2:.2f} MB"
+            else:
+                tmp["size"] = f"{size / 1024**3:.2f} GB"
+
             images.append(tmp)
 
     return images
