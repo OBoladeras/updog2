@@ -13,7 +13,7 @@ from werkzeug.serving import run_simple
 
 from updog2.utils.path import is_valid_subpath, is_valid_upload_path, get_parent_directory, process_files
 from updog2.utils.output import error, info, warn, success
-from updog2.utils.images import get_images, reduce_image, generate_zip
+from updog2.utils.images import get_images, reduce_image, generate_zip, clean_zip
 import updog2.utils.qr as qr
 from updog2 import version as VERSION
 
@@ -212,13 +212,14 @@ def main():
             return redirect('/')
 
         requested_path = os.path.join(base_directory, path)
-        generate_zip(args.directory, requested_path)
+        zip_path = generate_zip(requested_path)
 
-        return send_from_directory(args.directory, "all_images.zip", as_attachment=True)
+        return send_file(zip_path, as_attachment=True)
 
     #############################
     # Switch mode functionality #
     #############################
+
     @app.route('/mode/<mode>', defaults={'path': ''})
     @app.route('/mode/<mode>/<path:path>')
     def switch_mode(mode, path):
@@ -259,4 +260,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    finally:
+        clean_zip()

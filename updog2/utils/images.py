@@ -3,6 +3,8 @@ import os
 from PIL import Image
 from zipfile import ZipFile
 
+ZIP_NAME = 'images.zip'
+
 
 def get_images(base_directory: str, dir: str = '') -> list[dict]:
     r"""
@@ -73,7 +75,7 @@ def reduce_image(path: str) -> io.BytesIO:
         return img_byte_arr
 
 
-def generate_zip(base_directory: str, path: str) -> None:
+def generate_zip(path: str) -> str:
     r"""
     Create a zip file with all images in a directory.  
     :param directory: The directory containing the images.  
@@ -82,10 +84,24 @@ def generate_zip(base_directory: str, path: str) -> None:
     Example:
     >>> generate_zip("C:/Users/username/Pictures", "C:/Users/username/Pictures")
     """
-    zipfile_name = os.path.join(base_directory, "all_images.zip")
+    zipfile_path = os.path.join(os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))), ZIP_NAME)
 
     # Create a zip file with all images
-    with ZipFile(zipfile_name, 'w') as zipf:
+    with ZipFile(zipfile_path, 'w') as zipf:
         for file in os.listdir(path):
             if is_image(os.path.join(path, file)):
                 zipf.write(os.path.join(path, file), file)
+
+    return zipfile_path
+
+
+def clean_zip() -> None:
+    r"""
+    Clean the zip file.
+    """
+    zipfile_path = os.path.join(os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))), ZIP_NAME)
+
+    if os.path.exists(zipfile_path):
+        os.remove(zipfile_path)
