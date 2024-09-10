@@ -3,18 +3,26 @@
 
 ## [Unreleased]
 ### Added
-- More info on images with image mode.
 - Show download progress when downloading all images.
+
+### Changed
+- More documentation on the code.
+
+### Fixed
+- Download all images now works correctly on phone.
+
+
+## [2.2.0] - 2024-09-10
+### Added
+- More info on images with image mode.
 - Add description of the functions to help read the code.
 
 ### Changed
-- Consistent colors with hover effects.
 - Better support for image formats.
-
 - Diferent processes for image backend.
-
-### Fixed
-- Download all images now works correctly.
+- Image style now works in subdirectories and when chosing a specific directory.
+- Better zip creation process.
+- Consistent colors with hover effects.
 
 
 ## [2.1.3] - 2024-09-05
