@@ -185,7 +185,7 @@ def main():
         if not args.images or not is_valid_subpath(path, base_directory):
             return redirect('/')
 
-        requested_path = os.path.join(base_directory, path)
+        requested_path = os.path.normpath(os.path.join(base_directory, path))
         if not os.path.exists(requested_path):
             abort(404)
 
@@ -198,6 +198,7 @@ def main():
     def download_image(path):
         if not args.images and not is_valid_subpath(path, base_directory):
             return redirect('/')
+        path = os.path.normpath(path)
 
         return send_from_directory(args.directory, path, as_attachment=True)
 
@@ -211,7 +212,7 @@ def main():
         if not is_valid_subpath(path, base_directory):
             return redirect('/')
 
-        requested_path = os.path.join(base_directory, path)
+        requested_path = os.path.normpath(os.path.join(base_directory, path))
         zip_path = generate_zip(requested_path)
 
         return send_file(zip_path, as_attachment=True)
@@ -225,7 +226,7 @@ def main():
     def switch_mode(mode, path):
         args.images = True if mode == 'images' else False
 
-        return redirect('/' + path)
+        return redirect('/' + os.path.normpath(path))
 
     # Password functionality is without username
     users = {
